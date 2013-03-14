@@ -1,0 +1,4 @@
+HashTable
+=========
+
+HashTable in Javascript
