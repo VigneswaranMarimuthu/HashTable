@@ -7,7 +7,7 @@
  */
 
 function HashTable(){
-  
+	
 	if(!(this instanceof arguments.callee))
 		return new arguments.callee();
 	
@@ -111,7 +111,7 @@ function HashTable(){
 	 * @returns String or Boolean or Number or Object or Array or <code>null</code>
 	 */
 	this.get = function(key){
-		return (isString(key) && key.trim() !== '') ? collection[key] : null;
+		return (isString(key) && key.trim() !== '') ? (collection.hasOwnProperty(key) ? collection[key] : undefined) : null;
 	};
 	
 	/**
@@ -122,7 +122,31 @@ function HashTable(){
 	 * @returns Collection
 	 */
 	this.getAll = function(){
-		return collection;
+		return collection;	// TODO: If any property added to Object.prototype will affect the return value.
+	};						// Neglected, if client uses object.hasOwnProperty(key).
+	
+	/**
+	 * Searches the collection for the passed key and value. Use strict, if you need
+	 * case sensitive matching (Defaults to undefined). Use exactMatch, to add
+	 * '^' and '$' in the value (Defaults to undefined).
+	 * 
+	 * @author Vigneswaran Marimuthu
+	 * 
+	 * @param String
+	 * @param String / <b>Boolean</b> / <b>Number</b>
+	 * @param Boolean
+	 * @param Boolean
+	 * 
+	 * @returns Boolean or <code>null</code>
+	 */
+	this.search = function(key, value, strict, exactMatch){
+		if((isString(key) && key.trim() !== '') && (value !== null && value !== undefined && !isFunction(value))){
+			if(!this.hasKey(key)) console.debug("Key is not present.");
+			else if(isObject(value) || isArray(value)) console.debug("Unsearchable value passed.");
+			else if(isString(value)) return new RegExp((exactMatch === true) ? "^"+value+"$": "(?:\w*)"+value+"(?:\w*)", (strict === true) ? "" : "i").test(this.get(key));
+			else return this.get(key) === value;
+		}
+		return null;
 	};
 	
 	/**
@@ -169,7 +193,7 @@ function HashTable(){
 	 * 
 	 * @type Private 
 	 */
-	function Collection(){}
+	function Collection(){};
 	
 	/**
 	 * Private Utility Methods
